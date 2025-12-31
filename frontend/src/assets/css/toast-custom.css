@@ -1,0 +1,205 @@
+/* ==========================================
+   ESTILOS PERSONALIZADOS PARA TOAST EN MATERIALIZE
+   Archivo: src/assets/css/toast-custom.css
+   ========================================== */
+
+/* Container principal de los toasts */
+.Vue__Toastification__container {
+  /* Z-index más alto que cualquier elemento de Materialize */
+  z-index: 10000 !important;
+  
+  /* Posición que no interfiere con navbar */
+  top: 80px !important;
+  right: 20px !important;
+  
+  /* Ancho máximo para no interferir con el contenido */
+  max-width: 400px !important;
+}
+
+/* Toast individual */
+.Vue__Toastification__toast {
+  /* Fuente que coincide con Materialize */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  
+  /* Bordes redondeados Material Design */
+  border-radius: 4px !important;
+  
+  /* Sombra que coincide con Materialize cards */
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12) !important;
+  
+  /* Padding interno */
+  padding: 16px !important;
+  
+  /* Ancho mínimo y máximo */
+  min-width: 300px !important;
+  max-width: 380px !important;
+  
+  /* Margen entre toasts */
+  margin-bottom: 10px !important;
+}
+
+/* Colores que coinciden EXACTAMENTE con la paleta de Materialize */
+.Vue__Toastification__toast--success {
+  background-color: #4caf50 !important; /* green */
+}
+
+.Vue__Toastification__toast--error {
+  background-color: #f44336 !important; /* red */
+}
+
+.Vue__Toastification__toast--warning {
+  background-color: #ff9800 !important; /* orange */
+}
+
+.Vue__Toastification__toast--info {
+  background-color: #2196f3 !important; /* blue */
+}
+
+/* Contenido del toast */
+.Vue__Toastification__toast-body {
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: white !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Barra de progreso */
+.Vue__Toastification__progress-bar {
+  background: rgba(255, 255, 255, 0.3) !important;
+  height: 3px !important;
+}
+
+/* Botón de cerrar */
+.Vue__Toastification__close-button {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  opacity: 0.8 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.Vue__Toastification__close-button:hover {
+  opacity: 1 !important;
+}
+
+/* Iconos dentro del toast */
+.Vue__Toastification__icon {
+  margin-right: 10px !important;
+  font-size: 20px !important;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN - Compatible con Materialize breakpoints
+   ========================================== */
+
+/* Tablet y móvil */
+@media only screen and (max-width: 992px) {
+  .Vue__Toastification__container {
+    top: 70px !important;
+    left: 15px !important;
+    right: 15px !important;
+    max-width: none !important;
+  }
+  
+  .Vue__Toastification__toast {
+    max-width: none !important;
+    min-width: auto !important;
+    margin-bottom: 8px !important;
+  }
+}
+
+/* Móvil pequeño */
+@media only screen and (max-width: 600px) {
+  .Vue__Toastification__container {
+    top: 60px !important;
+    left: 10px !important;
+    right: 10px !important;
+  }
+  
+  .Vue__Toastification__toast {
+    padding: 12px !important;
+    font-size: 13px !important;
+  }
+  
+  .Vue__Toastification__toast-body {
+    font-size: 13px !important;
+  }
+}
+
+/* ==========================================
+   COMPATIBILIDAD CON SIDENAV DE MATERIALIZE
+   ========================================== */
+
+/* Cuando el sidenav está abierto en desktop */
+@media only screen and (min-width: 993px) {
+  body.sidenav-open .Vue__Toastification__container {
+    right: 20px !important;
+  }
+}
+
+/* ==========================================
+   ANIMACIONES PERSONALIZADAS
+   ========================================== */
+
+/* Entrada del toast */
+.Vue__Toastification__bounce-enter-active {
+  animation: materialize-toast-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Salida del toast */
+.Vue__Toastification__bounce-leave-active {
+  animation: materialize-toast-out 0.3s ease-in;
+}
+
+@keyframes materialize-toast-in {
+  0% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.8);
+  }
+  60% {
+    opacity: 0.8;
+    transform: translateX(-10%) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes materialize-toast-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.8);
+  }
+}
+
+/* ==========================================
+   MODO OSCURO (si tu template lo soporta)
+   ========================================== */
+
+@media (prefers-color-scheme: dark) {
+  .Vue__Toastification__toast {
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.3), 0 2px 10px 0 rgba(0,0,0,0.2) !important;
+  }
+}
+
+/* ==========================================
+   ESTILOS ADICIONALES PARA TÍTULOS EN HTML
+   ========================================== */
+
+.toast-title {
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  margin-bottom: 4px !important;
+  display: block !important;
+}
+
+.toast-message {
+  font-weight: 400 !important;
+  opacity: 0.95 !important;
+}

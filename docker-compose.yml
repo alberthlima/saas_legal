@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Laravel API Backend
+  laravel:
+    build:
+      context: ./api-panel
+      dockerfile: Dockerfile
+    container_name: saas_legal_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api-panel:/var/www/html
+    environment:
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    networks:
+      - saas_network
+
+  # Vue Frontend
+  frontend:
+    image: node:22-alpine
+    container_name: saas_legal_frontend
+    working_dir: /app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Usar node_modules del contenedor, no de Windows
+    command: sh -c "npm install -g pnpm && pnpm install && pnpm dev --host"
+    networks:
+      - saas_network
+
+networks:
+  saas_network:
+    driver: bridge
