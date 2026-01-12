@@ -16,6 +16,8 @@ storage/framework/views/
 # Temporary files
 frontend/tsx-0/
 .git/
+*.zip
 # Ignore PHP temporary files if any
 .phpunit.cache/
 .vscode/
+
