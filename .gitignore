@@ -1,0 +1,21 @@
+# Node
+node_modules/
+.pnpm-store/
+
+# Laravel
+vendor/
+.env
+storage/logs/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+
+# Docker
+.docker/
+
+# Temporary files
+frontend/tsx-0/
+.git/
+# Ignore PHP temporary files if any
+.phpunit.cache/
+.vscode/

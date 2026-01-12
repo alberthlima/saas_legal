@@ -117,31 +117,6 @@ const login = async() => {
 }
 
 const toast = useMaterializeToast()
-
-function testSuccess() {
-  // Función para probar diferentes tipos de alertas
-  toast.showSuccess(
-    'Este es un mensaje de éxito',
-    '¡Operación exitosa!'
-  );
-}
-
-function testError() {
-  // Función para probar diferentes tipos de alertas
-  toast.showError(
-    'Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo más tarde.',
-    '¡Error!'
-  );
-}
-
-function testWarning() {
-  // Función para probar diferentes tipos de alertas
-  toast.showWarning(
-    'Esta operación no se puede deshacer',
-    'Advertencia'
-  );
-}
-
 // Validación básica del formulario
 function validateForm() {
   // Validar que el email no esté vacío y tenga formato válido
@@ -231,7 +206,7 @@ const authV2LoginIllustration = useGenerateImageVariant(authV2LoginIllustrationL
                   autofocus
                   label="Correo Electrónico"
                   type="email"
-                  placeholder="johndoe@email.com"
+                  placeholder="tunombre@email.com"
                 />
               </VCol>
 
