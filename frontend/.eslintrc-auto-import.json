@@ -351,6 +351,7 @@
     "watchTriggerable": true,
     "watchWithFilter": true,
     "whenever": true,
-    "useMaterializeToast": true
+    "useMaterializeToast": true,
+    "PERMISOS": true
   }
 }
