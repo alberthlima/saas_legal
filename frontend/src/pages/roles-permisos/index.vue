@@ -3,6 +3,7 @@
   const isRolAddDialog = ref(false);
   const isRolEditDialog = ref(false);
   const isRolDeleteDialog = ref(false);
+  const isLoading = ref(false);
   const list_roles = ref([]);
   const buscar = ref('');
   const role_edit = ref(null);
@@ -32,16 +33,19 @@
 
   const list = async () => {
     try {
+      isLoading.value = true;
+      
       const response = await $api("/role?search=" + (buscar.value ? buscar.value : ''), {
         method: "GET",
         onResponseError({ response }) {
           console.log(response._data.error);
         },
       })
-      console.log(response);
       list_roles.value = response.roles;
     } catch (error) {
       console.log(error);
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -122,7 +126,19 @@
             :headers="headers"
             :items="list_roles"
             :items-per-page="5"
+            :loading="isLoading"
+            loading-text="Cargando roles..."
+            no-data-text="No hay roles registrados"
             class="text-no-wrap"
+            :items-per-page-text="'Roles por página:'"
+            :page-text="'{0}-{1} de {2}'"
+            :items-per-page-options="[
+              { value: 5, title: '5' },
+              { value: 10, title: '10' },
+              { value: 25, title: '25' },
+              { value: 50, title: '50' },
+              { value: -1, title: 'Todo' }
+            ]"
           >
             <template #item.id="{ item }">
               <span class="text-h6">{{ item.id }}</span>
