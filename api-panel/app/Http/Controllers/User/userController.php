@@ -26,6 +26,8 @@ class userController extends Controller
                     "avatar" => $user->avatar ? ENV("APP_URL") . +"/storage/" . $user->avatar : NULL,
                     "created_at" => $user->created_at->format("Y/m/d H:i:s"),
                     "state" => $user->state,
+                    "avatar" => $user->avatar,
+                    "created_at" => $user->created_at->format("Y/m/d H:i:s"),
                     "role_id" => $user->role_id,
                     "role" => [
                         "name" => $user->role->name,
