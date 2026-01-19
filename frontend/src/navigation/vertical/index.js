@@ -56,7 +56,7 @@ export default [
   },
   {
     title: 'Usuarios',
-    to: { name: 'second-page' },
+    to: { name: 'usuarios' },
     icon: { icon: 'ri-user-settings-line' },
   },
 ]

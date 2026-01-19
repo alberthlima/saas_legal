@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('surname')->nullable()->after('name');
             $table->string('avatar')->nullable()->after('surname');
             $table->unsignedBigInteger('role_id')->nullable()->after('password');
+            $table->integer('state')->default(1)->after('role_id');
         });
     }
 

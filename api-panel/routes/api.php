@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Roles\RoleController;
+use App\Http\Controllers\User\userController;
 
 Route::group([
     //'middleware' => 'auth:api',
@@ -18,5 +19,8 @@ Route::group([
 Route::group([
     "middleware" => ["auth:api"]
 ], function($router){
-    Route::resource("role", RoleController::class); 
+    Route::resource("role", RoleController::class);
+
+    Route::get("user/get-roles", [userController::class, 'getRoles']);
+    Route::resource("user", userController::class);
 });

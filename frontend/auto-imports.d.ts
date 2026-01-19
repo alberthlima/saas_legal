@@ -46,7 +46,7 @@ declare global {
   const defineStore: typeof import('pinia')['defineStore']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
-  const emailValidator: typeof import('./src/@core/utils/validators.js')['emailValidator']
+  const emailValidator: typeof import('./src/utils/validators.js')['emailValidator']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const formatDate: typeof import('./src/@core/utils/formatters.js')['formatDate']
   const formatDateToMonthShort: typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']
@@ -55,6 +55,7 @@ declare global {
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
+  const imageValidator: typeof import('./src/utils/validators.js')['imageValidator']
   const inject: typeof import('vue')['inject']
   const injectLocal: typeof import('@vueuse/core')['injectLocal']
   const integerValidator: typeof import('./src/@core/utils/validators.js')['integerValidator']
@@ -100,9 +101,12 @@ declare global {
   const onStartTyping: typeof import('@vueuse/core')['onStartTyping']
   const onUnmounted: typeof import('vue')['onUnmounted']
   const onUpdated: typeof import('vue')['onUpdated']
+  const optionalImageValidator: typeof import('./src/utils/validators.js')['optionalImageValidator']
+  const optionalPdfValidator: typeof import('./src/utils/validators.js')['optionalPdfValidator']
   const paginationMeta: typeof import('./src/utils/paginationMeta.js')['paginationMeta']
-  const passwordValidator: typeof import('./src/@core/utils/validators.js')['passwordValidator']
+  const passwordValidator: typeof import('./src/utils/validators.js')['passwordValidator']
   const pausableWatch: typeof import('@vueuse/core')['pausableWatch']
+  const pdfValidator: typeof import('./src/utils/validators.js')['pdfValidator']
   const prefixWithPlus: typeof import('./src/@core/utils/formatters.js')['prefixWithPlus']
   const provide: typeof import('vue')['provide']
   const provideLocal: typeof import('@vueuse/core')['provideLocal']
@@ -121,11 +125,12 @@ declare global {
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
   const regexValidator: typeof import('./src/@core/utils/validators.js')['regexValidator']
   const registerPlugins: typeof import('./src/@core/utils/plugins.js')['registerPlugins']
-  const requiredValidator: typeof import('./src/@core/utils/validators.js')['requiredValidator']
+  const requiredValidator: typeof import('./src/utils/validators.js')['requiredValidator']
   const resolveComponent: typeof import('vue')['resolveComponent']
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const resolveVuetifyTheme: typeof import('./src/@core/utils/vuetify.js')['resolveVuetifyTheme']
+  const selectValidator: typeof import('./src/utils/validators.js')['selectValidator']
   const setActivePinia: typeof import('pinia')['setActivePinia']
   const setMapStoreSuffix: typeof import('pinia')['setMapStoreSuffix']
   const shallowReactive: typeof import('vue')['shallowReactive']
@@ -400,7 +405,7 @@ declare module 'vue' {
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
-    readonly emailValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['emailValidator']>
+    readonly emailValidator: UnwrapRef<typeof import('./src/utils/validators.js')['emailValidator']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDate']>
     readonly formatDateToMonthShort: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']>
@@ -409,6 +414,7 @@ declare module 'vue' {
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
+    readonly imageValidator: UnwrapRef<typeof import('./src/utils/validators.js')['imageValidator']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
     readonly integerValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['integerValidator']>
@@ -454,9 +460,13 @@ declare module 'vue' {
     readonly onStartTyping: UnwrapRef<typeof import('@vueuse/core')['onStartTyping']>
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
+    readonly optionalImageValidator: UnwrapRef<typeof import('./src/utils/validators.js')['optionalImageValidator']>
+    readonly optionalPdfValidator: UnwrapRef<typeof import('./src/utils/validators.js')['optionalPdfValidator']>
     readonly paginationMeta: UnwrapRef<typeof import('./src/utils/paginationMeta.js')['paginationMeta']>
     readonly passwordValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['passwordValidator']>
+    readonly passwordValidator: UnwrapRef<typeof import('./src/utils/validators.js')['passwordValidator']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
+    readonly pdfValidator: UnwrapRef<typeof import('./src/utils/validators.js')['pdfValidator']>
     readonly prefixWithPlus: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['prefixWithPlus']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideLocal: UnwrapRef<typeof import('@vueuse/core')['provideLocal']>
@@ -474,12 +484,12 @@ declare module 'vue' {
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly regexValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['regexValidator']>
-    readonly registerPlugins: UnwrapRef<typeof import('./src/@core/utils/plugins.js')['registerPlugins']>
-    readonly requiredValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['requiredValidator']>
+    readonly requiredValidator: UnwrapRef<typeof import('./src/utils/validators.js')['requiredValidator']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly resolveVuetifyTheme: UnwrapRef<typeof import('./src/@core/utils/vuetify.js')['resolveVuetifyTheme']>
+    readonly selectValidator: UnwrapRef<typeof import('./src/utils/validators.js')['selectValidator']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
@@ -747,7 +757,7 @@ declare module '@vue/runtime-core' {
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
-    readonly emailValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['emailValidator']>
+    readonly emailValidator: UnwrapRef<typeof import('./src/utils/validators.js')['emailValidator']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDate']>
     readonly formatDateToMonthShort: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['formatDateToMonthShort']>
@@ -756,6 +766,7 @@ declare module '@vue/runtime-core' {
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
+    readonly imageValidator: UnwrapRef<typeof import('./src/utils/validators.js')['imageValidator']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
     readonly integerValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['integerValidator']>
@@ -801,9 +812,13 @@ declare module '@vue/runtime-core' {
     readonly onStartTyping: UnwrapRef<typeof import('@vueuse/core')['onStartTyping']>
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
+    readonly optionalImageValidator: UnwrapRef<typeof import('./src/utils/validators.js')['optionalImageValidator']>
+    readonly optionalPdfValidator: UnwrapRef<typeof import('./src/utils/validators.js')['optionalPdfValidator']>
     readonly paginationMeta: UnwrapRef<typeof import('./src/utils/paginationMeta.js')['paginationMeta']>
     readonly passwordValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['passwordValidator']>
+    readonly passwordValidator: UnwrapRef<typeof import('./src/utils/validators.js')['passwordValidator']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
+    readonly pdfValidator: UnwrapRef<typeof import('./src/utils/validators.js')['pdfValidator']>
     readonly prefixWithPlus: UnwrapRef<typeof import('./src/@core/utils/formatters.js')['prefixWithPlus']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideLocal: UnwrapRef<typeof import('@vueuse/core')['provideLocal']>
@@ -821,12 +836,12 @@ declare module '@vue/runtime-core' {
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly regexValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['regexValidator']>
-    readonly registerPlugins: UnwrapRef<typeof import('./src/@core/utils/plugins.js')['registerPlugins']>
-    readonly requiredValidator: UnwrapRef<typeof import('./src/@core/utils/validators.js')['requiredValidator']>
+    readonly requiredValidator: UnwrapRef<typeof import('./src/utils/validators.js')['requiredValidator']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
     readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly resolveVuetifyTheme: UnwrapRef<typeof import('./src/@core/utils/vuetify.js')['resolveVuetifyTheme']>
+    readonly selectValidator: UnwrapRef<typeof import('./src/utils/validators.js')['selectValidator']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>

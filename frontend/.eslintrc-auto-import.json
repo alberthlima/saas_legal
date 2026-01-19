@@ -352,6 +352,11 @@
     "watchWithFilter": true,
     "whenever": true,
     "useMaterializeToast": true,
-    "PERMISOS": true
+    "PERMISOS": true,
+    "imageValidator": true,
+    "optionalImageValidator": true,
+    "optionalPdfValidator": true,
+    "pdfValidator": true,
+    "selectValidator": true
   }
 }
