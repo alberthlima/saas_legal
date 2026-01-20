@@ -12,13 +12,13 @@ export default [
     children: [
       {
         title: 'Categorías',
-        to: 'second-page',
+        to: 'categorias',
         permission: 'listar_categoria',
         icon: { icon: 'ri-radio-button-line' },
       },
       {
         title: 'Tipos de Documentos',
-        to: 'second-page',
+        to: 'tipos',
         permission: 'listar_tipo_documento',
         icon: { icon: 'ri-radio-button-line' },
       },
