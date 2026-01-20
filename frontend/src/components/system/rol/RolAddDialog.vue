@@ -17,12 +17,34 @@ const permissions = ref([]);
 const isLoading = ref(false);
 const toast = useMaterializeToast()
 
-const AddEditPermission = (permission) => {
-  if (permissions.value.includes(permission)) {
-    permissions.value = permissions.value.filter((item) => item !== permission);
+const AddEditPermission = (item, permiso) => {
+  const permissionName = permiso.permiso;
+  const isListado = permiso.name === 'Listado';
+
+  if (permissions.value.includes(permissionName)) {
+    // Si estamos desmarcando
+    permissions.value = permissions.value.filter((item) => item !== permissionName);
+    
+    // Si era un Listado, desmarcar todos los demás del mismo módulo
+    if (isListado) {
+      const otherPerms = item.permisos.filter(p => p.name !== 'Listado').map(p => p.permiso);
+      permissions.value = permissions.value.filter(p => !otherPerms.includes(p));
+    }
   } else {
-    permissions.value.push(permission);
+    // Si estamos marcando
+    permissions.value.push(permissionName);
   }
+};
+
+const isPermissionDisabled = (item, permiso) => {
+  // Si no es un "Listado", verificar si el Listado de este módulo está marcado
+  if (permiso.name !== 'Listado') {
+    const listadoPerm = item.permisos.find(p => p.name === 'Listado');
+    if (listadoPerm) {
+      return !permissions.value.includes(listadoPerm.permiso);
+    }
+  }
+  return false;
 };
 
 const store = async() => {
@@ -196,14 +218,16 @@ const dialogVisibleUpdate = val => {
                       <td class="pa-4">
                         <div class="d-flex flex-wrap gap-2">
                           <VCheckbox
+                            v-model="permissions"
                             v-for="(permiso,index2) in item.permisos"
                             :key="index2"
                             :label="permiso.name"
                             :value="permiso.permiso"
+                            :disabled="isPermissionDisabled(item, permiso)"
                             density="compact"
                             hide-details
                             color="primary"
-                            @click="AddEditPermission(permiso.permiso)"
+                            @click="AddEditPermission(item, permiso)"
                           />
                         </div>
                       </td>
@@ -232,6 +256,7 @@ const dialogVisibleUpdate = val => {
               <VBtn 
                 color="secondary"
                 class="px-8"
+                :disabled="isLoading"
                 @click="onFormReset"
               >
                 <VIcon start icon="ri-arrow-left-line"/>

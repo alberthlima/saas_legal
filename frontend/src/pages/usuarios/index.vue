@@ -84,10 +84,25 @@
     user_delete.value = item;
   }
 
+  const avatarText = value => {
+    const names = value.split(" ");
+    let initials = "";
+    names.forEach((name) => {
+      initials += name.charAt(0).toUpperCase();
+    });
+    return initials;
+  };
+
   onMounted(() => {
     list();
     getRoles();
   })
+
+  definePage({ 
+    meta:{
+      permission: 'listar_usuario'
+    }
+  });
 </script>
 
 <template>
@@ -147,8 +162,42 @@
             <template #item.id="{ item }">
               <span class="text-h6">{{ item.id }}</span>
             </template>
+            <template #item.full_name="{ item }">
+              <div class="d-flex align-center">
+                <VAvatar
+                  size="32"
+                  :color="item.avatar ? '' : 'primary'"
+                  :class="item.avatar ? '' : 'v-avatar-light-bg primary--text'"
+                  :variant="!item.avatar ? 'tonal' : undefined"
+                >
+                  <VImg
+                    v-if="item.avatar"
+                    :src="item.avatar"
+                  />
+                  <span
+                    v-else
+                    class="text-sm"
+                  >{{ avatarText(item.full_name) }}</span>
+                </VAvatar>
+                <div class="d-flex flex-column ms-3">
+                  <span class="d-block font-weight-medium text-high-emphasis text-truncate">{{ item.full_name }}</span>
+                </div>
+              </div>
+            </template>
+            <template #item.email="{ item }">
+              <span class="text-h6">{{ item.email }}</span>
+            </template>
             <template #item.role="{ item }">
               <span class="text-h6">{{ item.role.name }}</span>
+            </template>
+            <template #item.state="{ item }">
+              <VChip
+                :color="item.state === 1 ? 'success' : 'error'"
+                size="small"
+                class="text-capitalize"
+              >
+                {{ item.state === 1 ? 'Activo' : 'Inactivo' }}
+              </VChip>
             </template>
             <!-- Actions -->
             <template #item.action="{ item }">
@@ -185,6 +234,7 @@
           v-if="user_edit && isUserEditDialog"
           v-model:isDialogVisible="isUserEditDialog"
           :userSelected="user_edit"
+          :roles="list_roles"
           @editUser="list()"
         />
 

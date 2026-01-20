@@ -1,14 +1,14 @@
 <script setup>
 import { useGenerateImageVariant } from '@/@core/composable/useGenerateImageVariant'
-import pages404 from '@images/pages/404.png'
-import miscMaskDark from '@images/misc/misc-mask-dark.png'
 import miscMaskLight from '@images/misc/misc-mask-light.png'
-import miscObj from '@images/pages/misc-404-object.png'
+import pages401 from '@images/pages/401.png'
+import miscMaskDark from '@images/misc/misc-mask-dark.png'
+import miscObj from '@images/pages/misc-401-object.png'
 
-const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark)
+const miscThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark)
 
 definePage({
-  alias: '/pages/misc/not-found/:error(.*)',
+  alias: '/pages/misc/not-authorized',
   meta: {
     layout: 'blank',
     public: true,
@@ -19,16 +19,16 @@ definePage({
 <template>
   <div class="misc-wrapper">
     <ErrorHeader
-      status-code="404"
-      title="Pagina no encontrada ⚠️"
-      description="No pudimos encontrar la página que estás buscando."
+      status-code="401"
+      title="Usted no tiene permiso para acceder a esta página! 🔐"
+      description="Regresa a la página principal!"
       class="mb-10"
     />
 
     <!-- 👉 Image -->
     <div class="misc-avatar w-100 text-center">
       <VImg
-        :src="pages404"
+        :src="pages401"
         alt="Coming Soon"
         :height="$vuetify.display.xs ? 400 : 500"
         class="my-sm-5"
@@ -42,7 +42,7 @@ definePage({
       </VBtn>
 
       <VImg
-        :src="authThemeMask"
+        :src="miscThemeMask"
         class="d-none d-md-block footer-coming-soon flip-in-rtl"
         cover
       />
@@ -50,8 +50,8 @@ definePage({
       <VImg
         :src="miscObj"
         class="d-none d-md-block footer-coming-soon-obj"
-        :max-width="177"
-        height="160"
+        :max-width="212"
+        height="165"
       />
     </div>
   </div>

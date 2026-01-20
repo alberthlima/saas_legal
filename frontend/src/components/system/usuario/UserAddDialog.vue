@@ -5,7 +5,6 @@ import {
   emailValidator, 
   passwordValidator, 
   selectValidator,
-  imageValidator,
   optionalImageValidator,
 } from '@/utils/validators'
 
@@ -38,7 +37,6 @@ const previewUrl = ref(null);
 
 // Función para manejar la selección de imagen
 const onImageSelect = (files) => {
-  console.log('onImageSelect called with:', files)
   
   // Limpiar URL anterior si existe
   if (previewUrl.value) {
@@ -48,47 +46,37 @@ const onImageSelect = (files) => {
   // VFileInput puede pasar un archivo individual o un array
   const file = Array.isArray(files) ? files[0] : files
   
-  console.log('File selected:', file)
-  
   if (file) {
     // Crear URL para previsualización
     previewUrl.value = URL.createObjectURL(file)
-    console.log('Preview URL created:', previewUrl.value)
   } else {
     // Limpiar URL si no hay archivo
     previewUrl.value = null
-    console.log('No file selected, preview cleared')
   }
 }
 
 const store = async() => {
-  if(!name.value){
-    toast.showWarning(
-      'Debe ingresar un nombre',
-      'Error'
-    );
-    return;
+  let formData = new FormData();
+  formData.append('name', name.value);
+  formData.append('surname', surname.value);
+  formData.append('email', email.value);
+  formData.append('password', password.value);
+  formData.append('role_id', role_id.value);
+  if (avatar.value) {
+    formData.append('imagen', Array.isArray(avatar.value) ? avatar.value[0] : avatar.value);
   }
-
-  let data = {
-    name: name.value,
-    surname: surname.value,
-    email: email.value,
-    password: password.value,
-    role_id: role_id.value,
-    avatar: avatar.value,
-  }
+  formData.append('state', 1);
 
   try {
     isLoading.value = true;
     
     const response = await $api("/user", {
       method: "POST",
-      body: data,
+      body: formData,
       onResponse({ response }){
         if(response.status === 200){
           toast.showSuccess(
-            response._data.message || 'Rol guardado correctamente',
+            response._data.message || 'Usuario guardado correctamente',
             'Éxito'
           );
           
@@ -99,6 +87,7 @@ const store = async() => {
           password.value = null;
           role_id.value = null;
           avatar.value = null;
+          previewUrl.value = null;
           
           // Cerrar diálogo
           emit('update:isDialogVisible', false);
@@ -256,7 +245,6 @@ onUnmounted(() => {
                   class="mx-auto rounded-lg"
                   cover
                 />
-                <p class="text-caption mt-2">Previsualización del avatar</p>
               </div>
             </VCol>
             
@@ -279,6 +267,7 @@ onUnmounted(() => {
               <VBtn 
                 color="secondary"
                 class="px-8"
+                :disabled="isLoading"
                 @click="onFormReset"
               >
                 <VIcon start icon="ri-arrow-left-line"/>

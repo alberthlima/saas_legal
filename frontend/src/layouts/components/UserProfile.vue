@@ -6,36 +6,6 @@ const userProfileList = [
   { type: 'divider' },
   {
     type: 'navItem',
-    icon: 'ri-user-line',
-    title: 'Profile',
-    href: '#',
-  },
-  {
-    type: 'navItem',
-    icon: 'ri-settings-4-line',
-    title: 'Settings',
-    href: '#',
-  },
-  {
-    type: 'navItem',
-    icon: 'ri-file-text-line',
-    title: 'Billing Plan',
-    href: '#',
-    chipsProps: {
-      color: 'error',
-      text: '4',
-      size: 'small',
-    },
-  },
-  { type: 'divider' },
-  {
-    type: 'navItem',
-    icon: 'ri-money-dollar-circle-line',
-    title: 'Pricing',
-    href: '#',
-  },
-  {
-    type: 'navItem',
     icon: 'ri-question-line',
     title: 'FAQ',
     href: '#',
@@ -50,7 +20,7 @@ const logout = async () => {
   localStorage.removeItem("user");
   localStorage.removeItem("token");
 
-  await router.push("/login");
+  window.location.reload();
 }
 </script>
 

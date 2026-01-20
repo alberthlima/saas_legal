@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Roles\RoleController;
 use App\Http\Controllers\User\userController;
+use App\Http\Controllers\Category\categoryController;
 
 Route::group([
     //'middleware' => 'auth:api',
@@ -22,5 +23,8 @@ Route::group([
     Route::resource("role", RoleController::class);
 
     Route::get("user/get-roles", [userController::class, 'getRoles']);
+    Route::post("user/{id}", [userController::class, 'update']);
     Route::resource("user", userController::class);
+
+    Route::resource("category", categoryController::class);
 });

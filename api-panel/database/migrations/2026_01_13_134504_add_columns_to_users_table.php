@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('avatar')->nullable()->after('surname');
             $table->unsignedBigInteger('role_id')->nullable()->after('password');
             $table->integer('state')->default(1)->after('role_id');
+            $table->softDeletes();
         });
     }
 
@@ -25,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['surname', 'avatar', 'role_id']);
+            $table->dropColumn(['surname', 'avatar', 'role_id', 'state', 'deleted_at']);
         });
     }
 };

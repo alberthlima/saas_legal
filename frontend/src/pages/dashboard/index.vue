@@ -1,12 +1,9 @@
 <script setup>
-// Página de Dashboard básica
-
-definePage({
-  name: 'dashboard',
-  meta: {
-    layout: 'default',
-  },
-})
+  definePage({ 
+    meta:{
+      permission: 'all'
+    }
+  });
 </script>
 
 <template>

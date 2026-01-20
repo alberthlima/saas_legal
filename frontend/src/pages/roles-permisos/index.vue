@@ -61,7 +61,13 @@
 
   onMounted(() => {
     list();
-  })
+  });
+
+  definePage({ 
+    meta:{
+      permission: 'listar_rol'
+    }
+  });
 </script>
 
 <template>

@@ -95,6 +95,7 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $permissions = auth()->user()->getAllPermissions();
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
@@ -102,11 +103,12 @@ class AuthController extends Controller
             'user' => [
                 "full_name" => auth()->user()->name.' '.auth()->user()->surname,
                 "email" => auth()->user()->email,
-                "avatar" => auth()->user()->avatar ? env("APP_URL")."storage/".auth()->user()->avatar : NULL,
+                "avatar" => auth()->user()->avatar ? env("APP_URL")."/storage/".auth()->user()->avatar : NULL,
                 "role" => [
                     "id" => auth()->user()->role->id,
                     "name" => auth()->user()->role->name,
-                ]
+                ],
+                "permissions" => $permissions->pluck("name")->toArray(),
             ]
         ]);
     }

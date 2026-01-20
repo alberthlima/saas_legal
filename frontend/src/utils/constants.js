@@ -14,12 +14,12 @@ export const PERMISOS = [
         'name': 'Roles',
         'permisos': [
             {
-                name: 'Registrar',
-                permiso: 'registrar_rol',
-            },
-            {
                 name: 'Listado',
                 permiso: 'listar_rol',
+            },
+            {
+                name: 'Registrar',
+                permiso: 'registrar_rol',
             },
             {
                 name: 'Editar',
@@ -35,12 +35,12 @@ export const PERMISOS = [
         'name': 'Usuarios',
         'permisos': [
             {
-                name: 'Registrar',
-                permiso: 'registrar_usuario',
-            },
-            {
                 name: 'Listado',
                 permiso: 'listar_usuario',
+            },
+            {
+                name: 'Registrar',
+                permiso: 'registrar_usuario',
             },
             {
                 name: 'Editar',
@@ -74,13 +74,14 @@ export const PERMISOS = [
         'name': 'Categorias',
         'permisos': [
             {
-                name: 'Registrar',
-                permiso: 'registrar_categoria',
-            },
-            {
                 name: 'Listado',
                 permiso: 'listar_categoria',
             },
+            {
+                name: 'Registrar',
+                permiso: 'registrar_categoria',
+            },
+
             {
                 name: 'Editar',
                 permiso: 'editar_categoria',
@@ -92,15 +93,37 @@ export const PERMISOS = [
         ]
     },
     {
+        'name': 'Tipos de Documentos',
+        'permisos': [
+            {
+                name: 'Listado',
+                permiso: 'listar_tipo_documento',
+            },
+            {
+                name: 'Registrar',
+                permiso: 'registrar_tipo_documento',
+            },
+
+            {
+                name: 'Editar',
+                permiso: 'editar_tipo_documento',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_tipo_documento',
+            },
+        ]
+    },
+    {
         'name': 'Documentos',
         'permisos': [
             {
-                name: 'Registrar',
-                permiso: 'registrar_documento',
-            },
-            {
                 name: 'Listado',
                 permiso: 'listar_documento',
+            },
+            {
+                name: 'Registrar',
+                permiso: 'registrar_documento',
             },
             {
                 name: 'Editar',
@@ -116,12 +139,12 @@ export const PERMISOS = [
         'name': 'Planes',
         'permisos': [
             {
-                name: 'Registrar',
-                permiso: 'registrar_plan',
-            },
-            {
                 name: 'Listado',
                 permiso: 'listar_plan',
+            },
+            {
+                name: 'Registrar',
+                permiso: 'registrar_plan',
             },
             {
                 name: 'Editar',
@@ -137,12 +160,12 @@ export const PERMISOS = [
         'name': 'Clientes',
         'permisos': [
             {
-                name: 'Registrar',
-                permiso: 'registrar_cliente',
-            },
-            {
                 name: 'Listado',
                 permiso: 'listar_cliente',
+            },
+            {
+                name: 'Registrar',
+                permiso: 'registrar_cliente',
             },
             {
                 name: 'Editar',

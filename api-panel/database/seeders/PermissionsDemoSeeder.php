@@ -26,6 +26,11 @@ class PermissionsDemoSeeder extends Seeder
         Permission::create(['guard_name' => 'api','name' => 'editar_categoria']);
         Permission::create(['guard_name' => 'api','name' => 'eliminar_categoria']);
 
+        Permission::create(['guard_name' => 'api','name' => 'registrar_tipo_documento']);
+        Permission::create(['guard_name' => 'api','name' => 'listar_tipo_documento']);
+        Permission::create(['guard_name' => 'api','name' => 'editar_tipo_documento']);
+        Permission::create(['guard_name' => 'api','name' => 'eliminar_tipo_documento']);
+
         Permission::create(['guard_name' => 'api','name' => 'registrar_documento']);
         Permission::create(['guard_name' => 'api','name' => 'listar_documento']);
         Permission::create(['guard_name' => 'api','name' => 'editar_documento']);
