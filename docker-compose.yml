@@ -34,6 +34,22 @@ services:
     networks:
       - saas_network
 
+  # Telegram Bot (Python)
+  bot:
+    build:
+      context: ./bot-telegram
+      dockerfile: Dockerfile
+    container_name: saas_legal_bot
+    volumes:
+      - ./bot-telegram:/app
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - LARAVEL_API_URL=http://saas_legal_api:8000/api
+    depends_on:
+      - laravel
+    networks:
+      - saas_network
+
 networks:
   saas_network:
     driver: bridge

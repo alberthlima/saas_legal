@@ -30,17 +30,17 @@ export default [
       },
     ],
   },
-  { heading: 'Suscripciones y Clientes', permissions: ['listar_plan', 'listar_cliente', 'suscripciones'] },
+  { heading: 'Suscripciones y Clientes', permissions: ['listar_membresia', 'clientes', 'suscripciones'] },
   {
-    title: 'Planes',
-    to: { name: 'second-page' },
-    permission: 'listar_plan',
+    title: 'Membresías',
+    to: { name: 'membresias' },
+    permission: 'listar_membresia',
     icon: { icon: 'ri-list-check-3' },
   },
   {
     title: 'Clientes',
     to: { name: 'second-page' },
-    permission: 'listar_cliente',
+    permission: 'clientes',
     icon: { icon: 'ri-group-fill' },
   },
   {

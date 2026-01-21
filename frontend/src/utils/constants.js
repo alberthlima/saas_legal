@@ -53,24 +53,6 @@ export const PERMISOS = [
         ]
     },
     {
-        'name': 'Suscripciones',
-        'permisos': [
-            {
-                name: 'Suscripciones',
-                permiso: 'suscripciones',
-            },
-        ]
-    },
-    {
-        'name': 'Reportes',
-        'permisos': [
-            {
-                name: 'Reportes',
-                permiso: 'reportes',
-            },
-        ]
-    },
-    {
         'name': 'Categorias',
         'permisos': [
             {
@@ -136,23 +118,23 @@ export const PERMISOS = [
         ]
     },
     {
-        'name': 'Planes',
+        'name': 'Membresías',
         'permisos': [
             {
                 name: 'Listado',
-                permiso: 'listar_plan',
+                permiso: 'listar_membresia',
             },
             {
                 name: 'Registrar',
-                permiso: 'registrar_plan',
+                permiso: 'registrar_membresia',
             },
             {
                 name: 'Editar',
-                permiso: 'editar_plan',
+                permiso: 'editar_membresia',
             },
             {
                 name: 'Eliminar',
-                permiso: 'eliminar_plan',
+                permiso: 'eliminar_membresia',
             },
         ]
     },
@@ -160,20 +142,26 @@ export const PERMISOS = [
         'name': 'Clientes',
         'permisos': [
             {
-                name: 'Listado',
-                permiso: 'listar_cliente',
+                name: 'Clientes',
+                permiso: 'clientes',
             },
+        ]
+    },
+    {
+        'name': 'Suscripciones',
+        'permisos': [
             {
-                name: 'Registrar',
-                permiso: 'registrar_cliente',
+                name: 'Suscripciones',
+                permiso: 'suscripciones',
             },
+        ]
+    },
+    {
+        'name': 'Reportes',
+        'permisos': [
             {
-                name: 'Editar',
-                permiso: 'editar_cliente',
-            },
-            {
-                name: 'Eliminar',
-                permiso: 'eliminar_cliente',
+                name: 'Reportes',
+                permiso: 'reportes',
             },
         ]
     },

@@ -23,6 +23,7 @@ declare module 'vue-router/auto-routes' {
     'categorias': RouteRecordInfo<'categorias', '/categorias', Record<never, never>, Record<never, never>>,
     'dashboard': RouteRecordInfo<'dashboard', '/dashboard', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
+    'membresias': RouteRecordInfo<'membresias', '/membresias', Record<never, never>, Record<never, never>>,
     'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
     'roles-permisos': RouteRecordInfo<'roles-permisos', '/roles-permisos', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,

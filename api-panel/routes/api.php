@@ -6,6 +6,16 @@ use App\Http\Controllers\Roles\RoleController;
 use App\Http\Controllers\User\userController;
 use App\Http\Controllers\Category\categoryController;
 use App\Http\Controllers\TypeDocument\typeDocumentController;
+use App\Http\Controllers\Membership\MembershipController;
+use App\Http\Controllers\Bot\BotController;
+
+// Rutas para el Bot de Telegram
+Route::group(['prefix' => 'bot'], function () {
+    Route::get('/check-client/{telegram_id}', [BotController::class, 'checkClient']);
+    Route::post('/register-client', [BotController::class, 'registerClient']);
+    Route::get('/memberships', [BotController::class, 'listMemberships']);
+    Route::post('/subscribe', [BotController::class, 'subscribe']);
+});
 
 Route::group([
     //'middleware' => 'auth:api',
@@ -30,4 +40,6 @@ Route::group([
     Route::resource("category", categoryController::class);
     
     Route::resource("type", typeDocumentController::class);
+
+    Route::resource("membership", MembershipController::class);
 });
