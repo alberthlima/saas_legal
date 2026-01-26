@@ -14,7 +14,7 @@ class categoryController extends Controller
     public function index(Request $request)
     {
         $search = $request->search;
-        $categories = Category::where('name', 'like', "%$search%")->get();
+        $categories = Category::where('name', 'like', "%$search%")->orderBy('id', 'desc')->get();
         return response()->json([
             'categories' => $categories->map(function ($category) {
                 return [

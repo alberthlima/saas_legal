@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class Client extends Model
 {
@@ -13,6 +14,8 @@ class Client extends Model
         'telegram_id',
         'name',
         'ci',
+        'phone',
+        'city',
         'client_type',
         'state',
     ];
@@ -21,7 +24,7 @@ class Client extends Model
     {
         return $this->hasMany(Subscription::class);
     }
-    
+
     public function activeSubscription()
     {
         return $this->hasOne(Subscription::class)
@@ -31,13 +34,13 @@ class Client extends Model
 
     public function setCreatedAtAttribute($value)
     {
-    	date_default_timezone_set('America/La_Paz');
-        $this->attributes["created_at"]= Carbon::now();
+        date_default_timezone_set('America/La_Paz');
+        $this->attributes["created_at"] = Carbon::now();
     }
 
     public function setUpdatedAtAttribute($value)
     {
-    	date_default_timezone_set("America/La_Paz");
-        $this->attributes["updated_at"]= Carbon::now();
+        date_default_timezone_set("America/La_Paz");
+        $this->attributes["updated_at"] = Carbon::now();
     }
 }

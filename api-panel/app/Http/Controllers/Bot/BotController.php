@@ -27,10 +27,18 @@ class BotController extends Controller
             ]);
         }
 
+        // Buscar suscripción pendiente o activa
+        $currentSubscription = Subscription::with('membership')
+            ->where('client_id', $client->id)
+            ->whereIn('status', ['pending_payment', 'active'])
+            ->latest()
+            ->first();
+
         return response()->json([
             'exists' => true,
             'client' => $client,
-            'subscription' => $client->activeSubscription
+            'subscription' => $client->activeSubscription,
+            'current_subscription' => $currentSubscription
         ]);
     }
 
@@ -43,6 +51,8 @@ class BotController extends Controller
             'telegram_id' => 'required|unique:clients,telegram_id',
             'name' => 'required|string',
             'ci' => 'nullable|string',
+            'phone' => 'nullable|string',
+            'city' => 'nullable|string',
             'client_type' => 'nullable|string',
         ]);
 
@@ -50,6 +60,8 @@ class BotController extends Controller
             'telegram_id' => $request->telegram_id,
             'name' => $request->name,
             'ci' => $request->ci,
+            'phone' => $request->phone,
+            'city' => $request->city,
             'client_type' => $request->client_type,
             'state' => 1,
         ]);
@@ -66,7 +78,7 @@ class BotController extends Controller
     public function listMemberships()
     {
         $memberships = Membership::where('state', 1)->get();
-        
+
         return response()->json([
             'memberships' => $memberships
         ]);
@@ -84,10 +96,10 @@ class BotController extends Controller
 
         $client = Client::where('telegram_id', $request->telegram_id)->first();
 
-        // Si ya tiene una suscripción pendiente, la actualizamos o cancelamos la anterior
+        // Cancelar suscripciones pendientes anteriores
         Subscription::where('client_id', $client->id)
             ->where('status', 'pending_payment')
-            ->delete();
+            ->update(['status' => 'cancelled']);
 
         $subscription = Subscription::create([
             'client_id' => $client->id,
@@ -99,5 +111,34 @@ class BotController extends Controller
             'message' => 'Suscripción iniciada. Pendiente de pago.',
             'subscription' => $subscription
         ]);
+    }
+
+    /**
+     * Cancela la suscripción actual del cliente
+     */
+    public function cancelSubscription(Request $request)
+    {
+        $request->validate([
+            'telegram_id' => 'required|exists:clients,telegram_id',
+        ]);
+
+        $client = Client::where('telegram_id', $request->telegram_id)->first();
+
+        $subscription = Subscription::where('client_id', $client->id)
+            ->whereIn('status', ['pending_payment', 'active'])
+            ->latest()
+            ->first();
+
+        if ($subscription) {
+            $subscription->update(['status' => 'cancelled']);
+            return response()->json([
+                'message' => 'Suscripción cancelada exitosamente',
+                'subscription' => $subscription
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'No hay suscripción activa para cancelar'
+        ], 404);
     }
 }

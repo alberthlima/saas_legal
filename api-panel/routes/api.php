@@ -1,5 +1,5 @@
 <?php
- 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Roles\RoleController;
@@ -8,6 +8,8 @@ use App\Http\Controllers\Category\categoryController;
 use App\Http\Controllers\TypeDocument\typeDocumentController;
 use App\Http\Controllers\Membership\MembershipController;
 use App\Http\Controllers\Bot\BotController;
+use App\Http\Controllers\Client\clientController;
+use App\Http\Controllers\Subscription\subscriptionController;
 
 // Rutas para el Bot de Telegram
 Route::group(['prefix' => 'bot'], function () {
@@ -15,6 +17,7 @@ Route::group(['prefix' => 'bot'], function () {
     Route::post('/register-client', [BotController::class, 'registerClient']);
     Route::get('/memberships', [BotController::class, 'listMemberships']);
     Route::post('/subscribe', [BotController::class, 'subscribe']);
+    Route::post('/cancel-subscription', [BotController::class, 'cancelSubscription']);
 });
 
 Route::group([
@@ -30,7 +33,7 @@ Route::group([
 
 Route::group([
     "middleware" => ["auth:api"]
-], function($router){
+], function ($router) {
     Route::resource("role", RoleController::class);
 
     Route::get("user/get-roles", [userController::class, 'getRoles']);
@@ -38,8 +41,12 @@ Route::group([
     Route::resource("user", userController::class);
 
     Route::resource("category", categoryController::class);
-    
+
     Route::resource("type", typeDocumentController::class);
 
     Route::resource("membership", MembershipController::class);
+
+    Route::resource("client", clientController::class);
+
+    Route::resource("subscription", subscriptionController::class);
 });

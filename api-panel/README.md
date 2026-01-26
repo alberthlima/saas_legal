@@ -59,3 +59,30 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Documentación
+
+La documentación de la API se encuentra en el archivo [API Documentation](https://documenter.getpostman.com/view/21262228/UVeZJG6K).
+
+## Endpoints
+
+La documentación de la API se encuentra en el archivo [API Documentation](https://documenter.getpostman.com/view/21262228/UVeZJG6K).
+
+## Endpoints
+
+- [GET /client](https://documenter.getpostman.com/view/21262228/UVeZJG6K)
+- [POST /client](https://documenter.getpostman.com/view/21262228/UVeZJG6K)
+- [PUT /client](https://documenter.getpostman.com/view/21262228/UVeZJG6K)
+- [DELETE /client](https://documenter.getpostman.com/view/21262228/UVeZJG6K)
+
+## Categorias
+
+- Estudiante / Académico: Esta categoría se refiere a: Apoyo en investigación jurídica, resúmenes de leyes, práctica forense y consultas sobre doctrina legal y jurisprudencia boliviana.
+- Derecho Civil: Esta categoría abarca casos con respecto a: Contratos, préstamos, deudas, herencias, alquileres y propiedad de inmuebles.
+- Derecho Penal: Esta categoría abarca casos con respecto a: Casos ante la fiscalía, defensa en delitos, procesos policiales y audiencias.
+- Derecho de Familia: Esta categoría abarca casos con respecto a: Asistencia familiar, divorcios, guardas, tutela y adopciones.
+- Derecho Laboral: Esta categoría abarca casos con respecto a: Cálculo de beneficios sociales, despidos injustificados, finiquitos y contratos de trabajo.
+- Derecho Comercial: Esta categoría abarca casos con respecto a: Constitución de empresas, sociedades, marcas y trámites ante el SEPREC.
+- Derecho Administrativo: Esta categoría abarca casos con respecto a: Trámites ante alcaldías, gobernaciones, ministerios y recursos contra el Estado.
+- Derecho Tributario: Esta categoría abarca casos con respecto a: Impuestos, recursos ante el SIN, multas e impugnaciones tributarias.
+- Derecho Constitucional: Esta categoría abarca casos con respecto a: Acciones de Libertad, Amparos Constitucionales y defensa de derechos fundamentales.
