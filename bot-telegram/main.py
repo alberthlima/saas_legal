@@ -28,7 +28,7 @@ API_URL = os.getenv("LARAVEL_API_URL")
 STICKER_BIENVENIDA = "assets/img/sticker_animado_final.webm"
 
 # Estados de la conversación
-BOTONES_INICIO, NOMBRE, CI, TELEFONO, CIUDAD, TIPO, SELECCION_PLAN, GESTION_SUSCRIPCION = range(8)
+BOTONES_INICIO, NOMBRE, CI, TELEFONO, CIUDAD, TIPO, SELECCION_PLAN, GESTION_SUSCRIPCION, SELECCION_CATEGORIAS, ESPERANDO_VOUCHER = range(10)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Muestra un Sticker y verifica el acceso con HTML"""
@@ -37,8 +37,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     logging.info(f"Comando /start recibido de {first_name} (ID: {telegram_id})")
 
+    # Limpiar datos previos
+    context.user_data.clear()
+
     # 📝 Mensaje de Bienvenida con HTML
-    # Nota: En Telegram HTML, no existe <br>, se usa \n para saltos de línea.
     welcome_html = (
         f"⚖️ <b>Bienvenido, {first_name}</b>\n"
         f"<i>Iniciando sistema de justicia digital...</i>\n\n"
@@ -52,8 +54,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if os.path.exists(STICKER_BIENVENIDA):
             with open(STICKER_BIENVENIDA, 'rb') as sticker:
                 await update.message.reply_sticker(sticker=sticker)
-        else:
-            logging.warning(f"No se encontró el sticker en {STICKER_BIENVENIDA}")
     except Exception as e:
         logging.error(f"Error enviando Sticker: {e}")
 
@@ -64,7 +64,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             if data.get('exists'):
                 client_data = data['client']
-                subscription = data.get('subscription')
+                subscription = data.get('current_subscription')
                 
                 msg = (
                     f"✅ <b>Acceso Concedido</b>\n\n"
@@ -79,9 +79,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_text(msg, parse_mode="HTML")
                 return ConversationHandler.END
             else:
-                # Flujo para usuario nuevo con botones estéticos
                 reply_keyboard = [['📝 Iniciar Registro', '❌ Cancelar']]
-                
                 await update.message.reply_text(
                     "👋 <b>¡Hola! Un gusto saludarte.</b>\n\n"
                     "Parece que es tu primera vez por aquí. Para brindarte asesoría legal personalizada, necesitamos completar un registro rápido.\n\n"
@@ -211,42 +209,30 @@ async def mostrar_planes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     try:
         async with httpx.AsyncClient() as client:
-            # Primero verificamos si el cliente existe
             check_response = await client.get(f"{API_URL}/bot/check-client/{telegram_id}")
             check_data = check_response.json()
             
             if not check_data.get('exists'):
-                await update.message.reply_text(
-                    "⚠️ <b>Primero debes registrarte.</b>\nUsa /start para iniciar tu registro.",
-                    parse_mode="HTML"
-                )
+                await update.message.reply_text("⚠️ <b>Primero debes registrarte.</b>\nUsa /start para registrarte.", parse_mode="HTML")
                 return ConversationHandler.END
             
-            # Verificar si ya tiene una suscripción activa o pendiente
             current_sub = check_data.get('current_subscription')
             
             if current_sub:
-                # Ya tiene una suscripción
                 plan_name = current_sub['membership']['name']
                 plan_price = current_sub['membership']['price']
                 status = current_sub['status']
-                
-                # Guardamos la suscripción actual en context
                 context.user_data['current_subscription'] = current_sub
                 
                 if status == 'pending_payment':
                     msg = (
                         f"💳 <b>Suscripción Pendiente</b>\n\n"
-                        f"Ya tienes el plan <b>{plan_name}</b> seleccionado.\n"
+                        f"Plan: <b>{plan_name}</b>\n"
                         f"💰 Precio: <code>{plan_price} BOB</code>\n"
                         f"🔴 Estado: <b>Pendiente de Pago</b>\n\n"
                         f"¿Qué deseas hacer?"
                     )
-                    keyboard = [
-                        ['💳 Pagar Ahora'],
-                        ['🔄 Cambiar Plan'],
-                        ['❌ Cancelar Suscripción']
-                    ]
+                    keyboard = [['💳 Pagar Ahora'], ['🔄 Cambiar Plan'], ['❌ Cancelar Suscripción']]
                 elif status == 'active':
                     msg = (
                         f"✅ <b>Suscripción Activa</b>\n\n"
@@ -254,188 +240,270 @@ async def mostrar_planes(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         f"💰 Precio: <code>{plan_price} BOB</code>\n\n"
                         f"¿Qué deseas hacer?"
                     )
-                    keyboard = [
-                        ['📊 Ver Detalles'],
-                        ['❌ Cancelar Suscripción']
-                    ]
+                    keyboard = [['📊 Ver Detalles'], ['❌ Cancelar Suscripción']]
                 else:
-                    # Estado desconocido, mostrar planes normales
                     return await mostrar_lista_planes(update, context, client)
                 
-                await update.message.reply_text(
-                    msg,
-                    parse_mode="HTML",
-                    reply_markup=ReplyKeyboardMarkup(
-                        keyboard, one_time_keyboard=True, resize_keyboard=True
-                    )
-                )
+                await update.message.reply_text(msg, parse_mode="HTML", reply_markup=ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True))
                 return GESTION_SUSCRIPCION
             else:
-                # No tiene suscripción, mostrar lista de planes
                 return await mostrar_lista_planes(update, context, client)
-            
     except Exception as e:
         logging.error(f"Error en mostrar_planes: {e}")
-        await update.message.reply_text("❌ Error al conectar con el servidor.", parse_mode="HTML")
+        await update.message.reply_text("❌ Error de servidor.", parse_mode="HTML")
         return ConversationHandler.END
 
 async def mostrar_lista_planes(update: Update, context: ContextTypes.DEFAULT_TYPE, client):
     """Muestra la lista de planes disponibles"""
     response = await client.get(f"{API_URL}/bot/memberships")
     data = response.json()
-    
     memberships = data.get('memberships', [])
+    
     if not memberships:
-        await update.message.reply_text("❌ No hay planes disponibles en este momento.", parse_mode="HTML")
+        await update.message.reply_text("❌ No hay planes disponibles.", parse_mode="HTML")
         return ConversationHandler.END
     
-    # Guardamos las membresías en context.user_data para usarlas después
     context.user_data['memberships'] = memberships
-    
-    # Construir el mensaje con los planes
     msg = "💎 <b>Planes de Membresía Disponibles</b>\n\n"
     keyboard = []
-    
     for plan in memberships:
-        msg += (
-            f"🔹 <b>{plan['name']}</b>\n"
-            f"💰 Precio: <code>{plan['price']} BOB</code>\n"
-            f"📝 {plan['description']}\n"
-            f"✅ Límite Diario: {plan['daily_limit']} consultas\n\n"
-        )
+        msg += f"🔹 <b>{plan['name']}</b>\n💰 {plan['price']} BOB | Límite: {plan['daily_limit']} consultas\n🛡️ {plan['max_specialists']} Especialistas\n\n"
         keyboard.append([plan['name']])
-        
-    keyboard.append(["❌ Cancelar"])
     
-    await update.message.reply_text(
-        msg + "Por favor, elige el plan que mejor se adapte a tus necesidades:",
-        parse_mode="HTML",
-        reply_markup=ReplyKeyboardMarkup(
-            keyboard, one_time_keyboard=True, resize_keyboard=True
-        )
-    )
+    keyboard.append(["❌ Cancelar"])
+    await update.message.reply_text(msg + "Elija su plan:", parse_mode="HTML", reply_markup=ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True))
     return SELECCION_PLAN
 
 async def procesar_seleccion_plan(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Procesa el plan elegido y crea la suscripción"""
+    """Procesa el plan y pide elegir categorías"""
     seleccion = update.message.text
-    telegram_id = update.effective_user.id
-    
     if seleccion == "❌ Cancelar":
-        await update.message.reply_text("Acción cancelada. Usa /planes cuando estés listo.", reply_markup=ReplyKeyboardRemove())
+        await update.message.reply_text("Cancelado.", reply_markup=ReplyKeyboardRemove())
         return ConversationHandler.END
     
     memberships = context.user_data.get('memberships', [])
-    plan_elegido = next((p for p in memberships if p['name'] == seleccion), None)
+    plan = next((p for p in memberships if p['name'] == seleccion), None)
     
-    if not plan_elegido:
-        await update.message.reply_text("❌ Selección no válida. Por favor elige de la lista.")
+    if not plan:
+        await update.message.reply_text("Opción no válida.")
         return SELECCION_PLAN
+    
+    context.user_data['selected_plan'] = plan
+    context.user_data['selected_categories'] = []
     
     try:
         async with httpx.AsyncClient() as client:
-            datos_sub = {
-                "telegram_id": telegram_id,
-                "membership_id": plan_elegido['id']
-            }
-            response = await client.post(f"{API_URL}/bot/subscribe", json=datos_sub)
+            response = await client.get(f"{API_URL}/bot/categories")
+            categories = response.json().get('categories', [])
+            context.user_data['available_categories'] = categories
             
-            if response.status_code == 200:
-                await update.message.reply_text(
-                    f"✅ <b>¡Excelente elección!</b>\n\n"
-                    f"Has seleccionado el <b>{plan_elegido['name']}</b>.\n"
-                    f"Su suscripción está <b>Pendiente de Pago</b>.\n\n"
-                    f"Por favor, realice el pago correspondiente para activar sus beneficios.",
-                    parse_mode="HTML",
-                    reply_markup=ReplyKeyboardRemove()
-                )
-            else:
-                await update.message.reply_text("❌ No pudimos procesar tu suscripción. Intenta más tarde.", reply_markup=ReplyKeyboardRemove())
-    except Exception as e:
-        logging.error(f"Error en procesar_seleccion_plan: {e}")
-        await update.message.reply_text("❌ Error de comunicación.", reply_markup=ReplyKeyboardRemove())
-        
-    return ConversationHandler.END
+            # Lógica para Plan Estudiante (auto-seleccionar y finalizar)
+            if "Estudiante" in plan['name']:
+                est_cat = next((c for c in categories if "Estudiante" in c['name']), None)
+                if est_cat:
+                    context.user_data['selected_categories'] = [est_cat['id']]
+                    await update.message.reply_text("📚 <b>Plan Estudiante:</b> Se ha asignado automáticamente la categoría Estudiante.", parse_mode="HTML")
+                    return await finalizar_suscripcion_con_categorias(update, context)
+                else:
+                    await update.message.reply_text("❌ Error: No se encontró la categoría Estudiante.")
+                    return ConversationHandler.END
 
-async def manejar_gestion_suscripcion(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Maneja las opciones cuando el usuario ya tiene una suscripción"""
-    opcion = update.message.text
-    telegram_id = update.effective_user.id
+            # Iniciar selección secuencial para otros planes
+            context.user_data['selection_step'] = 1
+            return await pedir_siguiente_categoria(update, context)
+    except Exception as e:
+        logging.error(f"Error: {e}")
+        await update.message.reply_text("❌ Error de comunicación con el servidor.")
+        return ConversationHandler.END
+
+async def pedir_siguiente_categoria(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Pide la siguiente categoría en el flujo secuencial"""
+    plan = context.user_data['selected_plan']
+    step = context.user_data['selection_step']
+    available = context.user_data['available_categories']
+    selected_ids = context.user_data['selected_categories']
+
+    if step > plan['max_specialists']:
+        return await finalizar_suscripcion_con_categorias(update, context)
+
+    msg = (
+        f"🎯 <b>Plan: {plan['name']}</b>\n"
+        f"Seleccione su especialista <b>{step}/{plan['max_specialists']}</b>:"
+    )
     
-    if opcion == '💳 Pagar Ahora':
-        await update.message.reply_text(
-            "💳 <b>Proceso de Pago</b>\n\n"
-            "Por favor, realiza la transferencia bancaria a:\n\n"
-            "🏦 <b>Banco:</b> Banco Nacional\n"
-            "💼 <b>Cuenta:</b> 1234567890\n"
-            "👤 <b>Titular:</b> SaaS Legal\n\n"
-            "Una vez realizado el pago, envía el comprobante a nuestro WhatsApp para activar tu membresía.",
-            parse_mode="HTML",
-            reply_markup=ReplyKeyboardRemove()
-        )
+    # Mostrar solo categorías no seleccionadas aún
+    keyboard = []
+    for cat in available:
+        if cat['id'] not in selected_ids:
+            keyboard.append([cat['name']])
+    
+    keyboard.append(["❌ Cancelar"])
+    
+    await update.message.reply_text(
+        msg, 
+        parse_mode="HTML", 
+        reply_markup=ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+    )
+    return SELECCION_CATEGORIAS
+
+async def manejar_seleccion_categorias(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Maneja la selección de UNA categoría y pasa a la siguiente"""
+    seleccion = update.message.text
+    available = context.user_data['available_categories']
+    selected = context.user_data['selected_categories']
+    
+    if seleccion == "❌ Cancelar":
+        await update.message.reply_text("Acción cancelada.", reply_markup=ReplyKeyboardRemove())
         return ConversationHandler.END
     
-    elif opcion == '🔄 Cambiar Plan':
-        # Mostrar lista de planes disponibles
+    category = next((c for c in available if c['name'] == seleccion), None)
+    
+    if not category:
+        await update.message.reply_text("Por favor, elija una opción válida del teclado.")
+        return await pedir_siguiente_categoria(update, context)
+    
+    selected.append(category['id'])
+    context.user_data['selection_step'] += 1
+    
+    return await pedir_siguiente_categoria(update, context)
+
+async def finalizar_suscripcion_con_categorias(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Crea la suscripción y asocia las categorías"""
+    telegram_id = update.effective_user.id
+    plan = context.user_data['selected_plan']
+    categories = context.user_data['selected_categories']
+    
+    await update.message.reply_text("⏳ <b>Procesando su suscripción...</b>", parse_mode="HTML", reply_markup=ReplyKeyboardRemove())
+
+    try:
+        async with httpx.AsyncClient() as client:
+            # 1. Crear Suscripción
+            sub_resp = await client.post(f"{API_URL}/bot/subscribe", json={
+                "telegram_id": telegram_id,
+                "membership_id": plan['id']
+            }, timeout=30.0)
+            
+            if sub_resp.status_code != 200:
+                logging.error(f"Error en subscribe: {sub_resp.text}")
+                await update.message.reply_text("❌ No pudimos iniciar tu suscripción en este momento.")
+                return ConversationHandler.END
+
+            subscription = sub_resp.json().get('subscription')
+            
+            # 2. Guardar Categorías
+            cat_resp = await client.post(f"{API_URL}/bot/set-categories", json={
+                "subscription_id": subscription['id'],
+                "category_ids": categories
+            }, timeout=30.0)
+            
+            if cat_resp.status_code != 200:
+                logging.error(f"Error en set-categories: {cat_resp.text}")
+                await update.message.reply_text("❌ Error al asignar especialidades.")
+                return ConversationHandler.END
+            
+            await update.message.reply_text(
+                f"🎉 <b>¡Registro Exitoso!</b>\n\n"
+                f"Has elegido el <b>{plan['name']}</b>.\n"
+                f"Estado: <b>Pendiente de Pago</b>.\n\n"
+                f"Usa /planes para ver los datos de pago y activar tus beneficios.",
+                parse_mode="HTML"
+            )
+            return ConversationHandler.END
+    except Exception as e:
+        logging.error(f"Error crítico: {e}", exc_info=True)
+        await update.message.reply_text("❌ Error de comunicación con el servidor central.")
+        return ConversationHandler.END
+
+async def manejar_gestion_suscripcion(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Maneja el pago y detalles con datos dinámicos"""
+    opcion = update.message.text
+    telegram_id = update.effective_user.id
+    current_sub = context.user_data.get('current_subscription')
+
+    if opcion == '💳 Pagar Ahora':
         try:
             async with httpx.AsyncClient() as client:
-                return await mostrar_lista_planes(update, context, client)
+                resp = await client.get(f"{API_URL}/bot/settings")
+                settings = resp.json()
+                
+                msg = (
+                    f"💳 <b>Datos de Pago</b>\n\n"
+                    f"👤 <b>Contacto:</b> {settings['contact_name']}\n"
+                    f"🏦 <b>Datos Bancarios:</b>\n{settings['bank_details']}\n\n"
+                    f"📱 <b>Soporte:</b> {settings['telegram_user']}\n\n"
+                    "Escanea el siguiente QR para realizar el pago:"
+                )
+                
+                keyboard = [['✅ Pago Realizado'], ['❌ Volver']]
+                reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+
+                qr_url = settings.get('qr_url')
+                if qr_url:
+                    # Ajustar URL si estamos en Docker (localhost -> saas_legal_api)
+                    if "localhost" in qr_url or "127.0.0.1" in qr_url:
+                        qr_url = qr_url.replace("localhost", "saas_legal_api").replace("127.0.0.1", "saas_legal_api")
+                    
+                    try:
+                        qr_resp = await client.get(qr_url, timeout=10.0)
+                        if qr_resp.status_code == 200:
+                            from io import BytesIO
+                            photo = BytesIO(qr_resp.content)
+                            photo.name = "qr_pago.png"
+                            await update.message.reply_photo(photo=photo, caption=msg, parse_mode="HTML", reply_markup=reply_markup)
+                        else:
+                            logging.error(f"Error QR: status {qr_resp.status_code} on {qr_url}")
+                            await update.message.reply_text(msg + "\n\n⚠️ (No se pudo cargar el QR, usa los datos manuales)", parse_mode="HTML", reply_markup=reply_markup)
+                    except Exception as e:
+                        logging.error(f"Error descargando QR en {qr_url}: {e}")
+                        await update.message.reply_text(msg + "\n\n⚠️ (Error al cargar el QR)", parse_mode="HTML", reply_markup=reply_markup)
+                else:
+                    await update.message.reply_text(msg, parse_mode="HTML", reply_markup=reply_markup)
+                return GESTION_SUSCRIPCION
         except Exception as e:
-            logging.error(f"Error al cambiar plan: {e}")
-            await update.message.reply_text("❌ Error al cargar planes.", reply_markup=ReplyKeyboardRemove())
+            logging.error(f"Error settings: {e}")
+            await update.message.reply_text("❌ Error de comunicación. Intenta de nuevo en unos segundos.")
             return ConversationHandler.END
-    
+
+    elif opcion == '✅ Pago Realizado':
+        await update.message.reply_text(
+            "📸 <b>¡Excelente!</b>\n\nPor favor, <b>envía una foto de tu comprobante o voucher</b> de pago para que el administrador pueda verificarlo rápidamente.",
+            parse_mode="HTML", reply_markup=ReplyKeyboardRemove()
+        )
+        return ESPERANDO_VOUCHER
+
+    elif opcion == '❌ Volver':
+        return await mostrar_planes(update, context)
+
     elif opcion == '❌ Cancelar Suscripción':
-        # Cancelar la suscripción actual
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
                     f"{API_URL}/bot/cancel-subscription",
                     json={"telegram_id": telegram_id}
                 )
-                
                 if response.status_code == 200:
-                    await update.message.reply_text(
-                        "✅ <b>Suscripción Cancelada</b>\n\n"
-                        "Tu suscripción ha sido cancelada exitosamente.\n"
-                        "Puedes volver a suscribirte en cualquier momento usando /planes",
-                        parse_mode="HTML",
-                        reply_markup=ReplyKeyboardRemove()
-                    )
+                    await update.message.reply_text("✅ Suscripción Cancelada.", parse_mode="HTML", reply_markup=ReplyKeyboardRemove())
                 else:
-                    await update.message.reply_text(
-                        "❌ No se pudo cancelar la suscripción. Intenta más tarde.",
-                        reply_markup=ReplyKeyboardRemove()
-                    )
+                    await update.message.reply_text("❌ Error al cancelar.", reply_markup=ReplyKeyboardRemove())
         except Exception as e:
-            logging.error(f"Error al cancelar suscripción: {e}")
-            await update.message.reply_text("❌ Error de comunicación.", reply_markup=ReplyKeyboardRemove())
-        
+            logging.error(f"Error: {e}")
+            await update.message.reply_text("Error de comunicación.", reply_markup=ReplyKeyboardRemove())
         return ConversationHandler.END
-    
+
     elif opcion == '📊 Ver Detalles':
-        current_sub = context.user_data.get('current_subscription')
         if current_sub:
             plan = current_sub['membership']
             await update.message.reply_text(
                 f"📊 <b>Detalles de tu Suscripción</b>\n\n"
                 f"📦 <b>Plan:</b> {plan['name']}\n"
                 f"💰 <b>Precio:</b> {plan['price']} BOB\n"
-                f"📝 <b>Descripción:</b> {plan['description']}\n"
                 f"✅ <b>Límite Diario:</b> {plan['daily_limit']} consultas\n"
-                f"👥 <b>Especialistas:</b> {plan['max_specialists']}\n"
-                f"🟢 <b>Estado:</b> Activa",
-                parse_mode="HTML",
-                reply_markup=ReplyKeyboardRemove()
+                f"👥 <b>Especialistas:</b> {plan['max_specialists']}",
+                parse_mode="HTML", reply_markup=ReplyKeyboardRemove()
             )
         return ConversationHandler.END
-    
-    else:
-        await update.message.reply_text(
-            "❌ Opción no válida. Usa /planes para ver tus opciones.",
-            reply_markup=ReplyKeyboardRemove()
-        )
-        return ConversationHandler.END
+
+    return ConversationHandler.END
 
 async def cancelar(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Cancela la conversación"""
@@ -445,6 +513,70 @@ async def cancelar(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=ReplyKeyboardRemove()
     )
     return ConversationHandler.END
+
+async def manejar_envio_voucher(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Recibe la foto del voucher, la sube a la API y notifica al admin"""
+    telegram_id = update.effective_user.id
+    current_sub = context.user_data.get('current_subscription')
+    
+    if not update.message.photo:
+        await update.message.reply_text("⚠️ Por favor, envía una <b>foto</b> del comprobante.")
+        return ESPERANDO_VOUCHER
+
+    # Obtener la foto (la mejor calidad)
+    photo_file = await update.message.photo[-1].get_file()
+    photo_bytes = await photo_file.download_as_bytearray()
+    
+    await update.message.reply_text("⏳ <b>Subiendo comprobante...</b>", parse_mode="HTML")
+
+    try:
+        async with httpx.AsyncClient() as client:
+            # 1. Subir a la API
+            files = {'voucher': ('voucher.jpg', bytes(photo_bytes), 'image/jpeg')}
+            data = {'subscription_id': current_sub['id']}
+            
+            resp = await client.post(f"{API_URL}/bot/upload-voucher", data=data, files=files, timeout=30.0)
+            
+            if resp.status_code != 200:
+                logging.error(f"Error subiendo voucher: {resp.text}")
+                await update.message.reply_text("❌ Error al subir el comprobante. Por favor intenta de nuevo.")
+                return ESPERANDO_VOUCHER
+
+            # 2. Notificar al Admin
+            resp_settings = await client.get(f"{API_URL}/bot/settings")
+            settings = resp_settings.json()
+            admin_id = settings.get('admin_telegram_id')
+
+            if admin_id:
+                first_name = update.effective_user.first_name
+                plan_name = current_sub['membership']['name']
+                msg_admin = (
+                    f"🔔 <b>¡Nuevo Pago con Voucher!</b>\n\n"
+                    f"👤 <b>Cliente:</b> {first_name}\n"
+                    f"📦 <b>Plan:</b> {plan_name}\n"
+                    f"🆔 <b>Telegram ID:</b> <code>{telegram_id}</code>\n\n"
+                    f"Verifique el comprobante en el panel."
+                )
+                try:
+                    # Enviar mensaje al admin con la foto del voucher
+                    from io import BytesIO
+                    voucher_to_admin = BytesIO(photo_bytes)
+                    voucher_to_admin.name = "comprobante.jpg"
+                    await context.bot.send_photo(chat_id=admin_id, photo=voucher_to_admin, caption=msg_admin, parse_mode="HTML")
+                except Exception as e:
+                    logging.error(f"Error enviando voucher al admin: {e}")
+
+            await update.message.reply_text(
+                "✅ <b>¡Comprobante Recibido!</b>\n\n"
+                "Tu pago está siendo verificado. Te notificaremos cuando tu suscripción sea activada.",
+                parse_mode="HTML", reply_markup=ReplyKeyboardRemove()
+            )
+            return ConversationHandler.END
+
+    except Exception as e:
+        logging.error(f"Error crítico en voucher: {e}", exc_info=True)
+        await update.message.reply_text("❌ Error de comunicación. Intenta subirlo de nuevo.")
+        return ESPERANDO_VOUCHER
 
 import asyncio
 
@@ -472,7 +604,9 @@ if __name__ == '__main__':
         entry_points=[CommandHandler("planes", mostrar_planes)],
         states={
             SELECCION_PLAN: [MessageHandler(filters.TEXT & ~filters.COMMAND, procesar_seleccion_plan)],
+            SELECCION_CATEGORIAS: [MessageHandler(filters.TEXT & ~filters.COMMAND, manejar_seleccion_categorias)],
             GESTION_SUSCRIPCION: [MessageHandler(filters.TEXT & ~filters.COMMAND, manejar_gestion_suscripcion)],
+            ESPERANDO_VOUCHER: [MessageHandler(filters.PHOTO, manejar_envio_voucher)],
         },
         fallbacks=[CommandHandler("cancelar", cancelar)],
     )
@@ -480,7 +614,6 @@ if __name__ == '__main__':
     app.add_handler(conv_handler)
     app.add_handler(planes_handler)
     
-    # Solución para RuntimeError en versiones nuevas de Python (3.12, 3.13, 3.14)
     try:
         asyncio.get_event_loop()
     except RuntimeError:

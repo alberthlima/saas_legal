@@ -45,6 +45,8 @@ class PermissionsDemoSeeder extends Seeder
 
         Permission::create(['guard_name' => 'api','name' => 'suscripciones']);
 
+        Permission::create(['guard_name' => 'api','name' => 'config']);
+
         Permission::create(['guard_name' => 'api','name' => 'reportes']);
 
         Permission::create(['guard_name' => 'api','name' => 'registrar_rol']);

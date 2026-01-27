@@ -165,4 +165,13 @@ export const PERMISOS = [
             },
         ]
     },
+    {
+        'name': 'Configuraciones',
+        'permisos': [
+            {
+                name: 'Configuraciones',
+                permiso: 'config',
+            },
+        ]
+    },
 ];

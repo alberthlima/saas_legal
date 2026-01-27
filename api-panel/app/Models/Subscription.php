@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Subscription extends Model
-{
+{   
     use SoftDeletes;
 
     protected $fillable = [
@@ -16,7 +17,15 @@ class Subscription extends Model
         'start_date',
         'end_date',
         'status',
+        'voucher',
     ];
+
+    protected $appends = ['voucher_url'];
+
+    public function getVoucherUrlAttribute()
+    {
+        return $this->voucher ? url(Storage::url($this->voucher)) : null;
+    }
 
     public function client()
     {
@@ -26,6 +35,11 @@ class Subscription extends Model
     public function membership()
     {
         return $this->belongsTo(Membership::class);
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'subscription_categories');
     }
 
     public function setCreatedAtAttribute($value)

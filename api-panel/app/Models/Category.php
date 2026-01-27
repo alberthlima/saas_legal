@@ -17,6 +17,11 @@ class Category extends Model
         'deleted_at',
     ];
 
+    public function subscriptions()
+    {
+        return $this->belongsToMany(Subscription::class, 'subscription_categories');
+    }
+
     public function setCreatedAtAttribute($value)
     {
     	date_default_timezone_set('America/La_Paz');

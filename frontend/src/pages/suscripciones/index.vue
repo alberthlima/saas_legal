@@ -21,6 +21,14 @@ const headers = [
     key: "end_date",
   },
   {
+    title: "Categorías",
+    key: "categories",
+  },
+  {
+    title: "Voucher",
+    key: "voucher_url",
+  },
+  {
     title: "Estado",
     key: "state",
   },
@@ -33,6 +41,12 @@ const headers = [
     key: "action",
   },
 ];
+
+const isApproveDialog = ref(false);
+const isCancelDialog = ref(false);
+const isVoucherDialog = ref(false);
+const subscriptionSelected = ref(null);
+const voucherUrlSelected = ref("");
 
 const isLoading = ref(false);
 const list_subscriptions = ref([]);
@@ -62,6 +76,21 @@ const list = async () => {
   } finally {
     isLoading.value = false;
   }
+};
+
+const openApprove = (item) => {
+  subscriptionSelected.value = item;
+  isApproveDialog.value = true;
+};
+
+const openCancel = (item) => {
+  subscriptionSelected.value = item;
+  isCancelDialog.value = true;
+};
+
+const openVoucher = (url) => {
+  voucherUrlSelected.value = url;
+  isVoucherDialog.value = true;
 };
 
 onMounted(() => {
@@ -98,6 +127,27 @@ definePage({
                   @click:clear="clearSearch"
                 />
               </VCol>
+
+              <!-- 👉 Modales -->
+              <SubscriptionApproveDialog
+                v-if="subscriptionSelected && isApproveDialog"
+                v-model:isDialogVisible="isApproveDialog"
+                :subscriptionSelected="subscriptionSelected"
+                @approveSubscription="list()"
+              />
+
+              <SubscriptionCancelDialog
+                v-if="subscriptionSelected && isCancelDialog"
+                v-model:isDialogVisible="isCancelDialog"
+                :subscriptionSelected="subscriptionSelected"
+                @cancelSubscription="list()"
+              />
+
+              <VoucherDialog
+                v-if="isVoucherDialog"
+                v-model:isDialogVisible="isVoucherDialog"
+                :voucherUrl="voucherUrlSelected"
+              />
             </VRow>
           </VCardText>
           <VDataTable
@@ -121,23 +171,82 @@ definePage({
             <template #item.id="{ item }">
               <span class="text-h6">{{ item.id }}</span>
             </template>
+            <template #item.categories="{ item }">
+              <div class="d-flex flex-wrap gap-1">
+                <VChip
+                  v-for="cat in item.categories"
+                  :key="cat.id"
+                  size="x-small"
+                  variant="outlined"
+                  color="info"
+                >
+                  {{ cat.name }}
+                </VChip>
+              </div>
+            </template>
+            <template #item.voucher_url="{ item }">
+              <VAvatar
+                v-if="item.voucher_url"
+                size="40"
+                rounded
+                class="cursor-pointer border"
+                @click="openVoucher(item.voucher_url)"
+              >
+                <VImg :src="item.voucher_url" />
+                <VTooltip activator="parent">Ver Voucher</VTooltip>
+              </VAvatar>
+              <span v-else class="text-caption text-disabled">Sin Voucher</span>
+            </template>
             <template #item.state="{ item }">
               <VChip
                 :color="
-                  item.state === 'cancelled' ? 'error' :
-                  item.state === 'pending_payment' ? 'warning' :
-                  item.state === 'active' ? 'success' : 'default'
+                  item.state === 'cancelled'
+                    ? 'error'
+                    : item.state === 'pending_payment'
+                      ? 'warning'
+                      : item.state === 'active'
+                        ? 'success'
+                        : 'default'
                 "
                 size="small"
                 class="text-capitalize"
               >
                 {{
-                  item.state === 'cancelled' ? 'Cancelado' :
-                  item.state === 'pending_payment' ? 'Pendiente de Pago' :
-                  item.state === 'active' ? 'Activo' :
-                  item.state
+                  item.state === "cancelled"
+                    ? "Cancelado"
+                    : item.state === "pending_payment"
+                      ? "Pendiente de Pago"
+                      : item.state === "active"
+                        ? "Activo"
+                        : item.state
                 }}
               </VChip>
+            </template>
+            <template #item.action="{ item }">
+              <div class="d-flex gap-2">
+                <VBtn
+                  v-if="item.state === 'pending_payment'"
+                  icon="ri-check-line"
+                  color="success"
+                  variant="tonal"
+                  size="small"
+                  @click="openApprove(item)"
+                >
+                  <VIcon icon="ri-check-line" />
+                  <VTooltip activator="parent">Aprobar Pago</VTooltip>
+                </VBtn>
+                <VBtn
+                  v-if="item.state !== 'cancelled' && item.state !== 'active'"
+                  icon="ri-close-line"
+                  color="error"
+                  variant="tonal"
+                  size="small"
+                  @click="openCancel(item)"
+                >
+                  <VIcon icon="ri-close-line" />
+                  <VTooltip activator="parent">Cancelar</VTooltip>
+                </VBtn>
+              </div>
             </template>
           </VDataTable>
         </VCard>

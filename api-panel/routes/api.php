@@ -10,6 +10,7 @@ use App\Http\Controllers\Membership\MembershipController;
 use App\Http\Controllers\Bot\BotController;
 use App\Http\Controllers\Client\clientController;
 use App\Http\Controllers\Subscription\subscriptionController;
+use App\Http\Controllers\SettingController;
 
 // Rutas para el Bot de Telegram
 Route::group(['prefix' => 'bot'], function () {
@@ -18,6 +19,11 @@ Route::group(['prefix' => 'bot'], function () {
     Route::get('/memberships', [BotController::class, 'listMemberships']);
     Route::post('/subscribe', [BotController::class, 'subscribe']);
     Route::post('/cancel-subscription', [BotController::class, 'cancelSubscription']);
+    Route::get('/settings', [SettingController::class, 'getBotSettings']);
+    Route::get('/categories', [BotController::class, 'listCategories']);
+    Route::post('/set-categories', [BotController::class, 'setSubscriptionCategories']);
+    Route::post('/notify-payment', [BotController::class, 'notifyPayment']);
+    Route::post('/upload-voucher', [BotController::class, 'uploadVoucher']);
 });
 
 Route::group([
@@ -48,5 +54,10 @@ Route::group([
 
     Route::resource("client", clientController::class);
 
+    Route::post("subscription/{id}/approve", [subscriptionController::class, 'approve']);
+    Route::post("subscription/{id}/cancel", [subscriptionController::class, 'cancel']);
     Route::resource("subscription", subscriptionController::class);
+
+    Route::get("settings", [SettingController::class, 'index']);
+    Route::post("settings", [SettingController::class, 'update']);
 });

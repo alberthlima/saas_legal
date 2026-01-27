@@ -59,6 +59,8 @@ declare module 'vue' {
     ScrollToTop: typeof import('./src/@core/components/ScrollToTop.vue')['default']
     ShareProjectDialog: typeof import('./src/components/dialogs/ShareProjectDialog.vue')['default']
     Shortcuts: typeof import('./src/@core/components/Shortcuts.vue')['default']
+    SubscriptionApproveDialog: typeof import('./src/components/system/suscripciones/SubscriptionApproveDialog.vue')['default']
+    SubscriptionCancelDialog: typeof import('./src/components/system/suscripciones/SubscriptionCancelDialog.vue')['default']
     TheCustomizer: typeof import('./src/@core/components/TheCustomizer.vue')['default']
     ThemeSwitcher: typeof import('./src/@core/components/ThemeSwitcher.vue')['default']
     TiptapEditor: typeof import('./src/@core/components/TiptapEditor.vue')['default']
@@ -71,5 +73,6 @@ declare module 'vue' {
     UserEditDialog: typeof import('./src/components/system/usuario/UserEditDialog.vue')['default']
     UserInfoEditDialog: typeof import('./src/components/dialogs/UserInfoEditDialog.vue')['default']
     UserUpgradePlanDialog: typeof import('./src/components/dialogs/UserUpgradePlanDialog.vue')['default']
+    VoucherDialog: typeof import('./src/components/system/suscripciones/VoucherDialog.vue')['default']
   }
 }

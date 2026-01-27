@@ -11,5 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# El comando se ejecutará con recarga automática si montamos el volumen
+# Copiar el resto del código
+COPY . .
+
+# Comando para ejecutar el bot
 CMD ["python", "main.py"]

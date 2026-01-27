@@ -81,4 +81,10 @@ export default [
     permission: "listar_usuario",
     icon: { icon: "ri-user-settings-line" },
   },
+  {
+    title: "Configuraciones",
+    to: { name: "configuracion" },
+    permission: "config",
+    icon: { icon: "ri-settings-4-line" },
+  },
 ];
