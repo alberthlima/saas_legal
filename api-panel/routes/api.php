@@ -11,6 +11,7 @@ use App\Http\Controllers\Bot\BotController;
 use App\Http\Controllers\Client\clientController;
 use App\Http\Controllers\Subscription\subscriptionController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\Document\documentController;
 
 // Rutas para el Bot de Telegram
 Route::group(['prefix' => 'bot'], function () {
@@ -60,4 +61,6 @@ Route::group([
 
     Route::get("settings", [SettingController::class, 'index']);
     Route::post("settings", [SettingController::class, 'update']);
+
+    Route::resource("document", documentController::class);
 });

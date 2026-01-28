@@ -27,7 +27,7 @@ export default [
       },
       {
         title: "Biblioteca",
-        to: "second-page",
+        to: "documentos",
         permission: "listar_documento",
         icon: { icon: "ri-radio-button-line" },
       },

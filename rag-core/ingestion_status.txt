@@ -1,0 +1,54 @@
+============================================================
+ESTADO DE LA BASE DE DATOS QDRANT
+============================================================
+Total de chunks: 2123
+
+Documentos indexados: 5
+
+============================================================
+DETALLE POR DOCUMENTO
+============================================================
+
+Doc ID: 1
+  Archivo: QyIZHOT4QSXUHejsLVfnoUM1Ji3Ghr6Ckk409IU6.pdf
+  Área: general
+  Categorías: [1]
+  Chunks: 423
+
+Doc ID: penal_1
+  Archivo: 0u2iiERrpQ2KzzJTFY2y05hFkCfQeyxowaIX2PLI.pdf
+  Área: penal
+  Categorías: [2]
+  Chunks: 425
+
+Doc ID: penal_2
+  Archivo: F5xTQdzNjWLgOuFquat8MFWJFsvLEapeqiQM2i38.pdf
+  Área: penal
+  Categorías: [2]
+  Chunks: 425
+
+Doc ID: penal_3
+  Archivo: jsJ5ZKVsFRqk8239dnVXjs8Ndh8wlFPRZT6oQG56.pdf
+  Área: penal
+  Categorías: [2]
+  Chunks: 425
+
+Doc ID: penal_4
+  Archivo: swuOxyKavd4seM72yhJBjTWG5ZvUQep5pVTot8el.pdf
+  Área: penal
+  Categorías: [2]
+  Chunks: 425
+
+============================================================
+RESUMEN POR ÁREA
+============================================================
+
+GENERAL:
+  Documentos: 1
+  Chunks totales: 423
+
+PENAL:
+  Documentos: 4
+  Chunks totales: 1700
+
+============================================================
